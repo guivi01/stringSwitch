@@ -3,9 +3,53 @@
 
 #include <iostream>
 
+uint64_t constexpr mix(char m, uint64_t s)
+{
+	return ((s << 7) + ~(s >> 3)) + ~m;
+}
+
+uint64_t constexpr hash(const char* m)
+{
+	return (*m) ? mix(*m, hash(m + 1)) : 0;
+}
+void switch_test(const char* str)
+{
+	switch (hash(str)) // run-time
+	{
+	case hash("tatatututoto"): // compile-time
+
+		std::cout << "tutu!" << std::endl;
+		break;
+
+	case hash("tatatititoto"): // compile-time
+
+		std::cout << "titi!" << std::endl;
+		break;
+
+	case hash("tutu"):
+	case hash("TUTU"):
+		std::cout << "1!" << std::endl;
+		break;
+
+	case hash("utut"):
+
+		std::cout << "2!" << std::endl;
+		break;
+
+	default:
+
+		std::cout << "wut?" << std::endl;
+		break;
+	};
+}
+
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	switch_test("tatatititoto");
+	switch_test("tatatututoto");
+	switch_test("abababubabub");
+	switch_test("TUTU");
+	switch_test("utut");
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
